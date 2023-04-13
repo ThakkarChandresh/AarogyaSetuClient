@@ -1,6 +1,6 @@
 package in.gov.aarogyasetu.client.controller;
 
-import in.gov.aarogyasetu.client.util.BaseMethods;
+import in.gov.aarogyasetu.client.util.UtilityMethods;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -14,7 +14,7 @@ import java.util.List;
 public class MainMenuController
 {
 
-    public void start()
+    public static void start()
     {
 
         JSONObject request;
@@ -23,7 +23,7 @@ public class MainMenuController
         {
             while (!Thread.currentThread().isInterrupted())
             {
-                System.out.print("\nSelect Appropriate Choice\n\n1.Check COVID Status\n2.Get Active Cases In My Area\n3.Already Registered? Log In\n4.Exit\n\nEnter Your Choice: ");
+                System.out.print("\nSelect Appropriate Choice\n\n1.Check COVID Status\n2.Get Active Cases In My City\n3.Already Registered? Log In\n4.Exit\n\nEnter Your Choice: ");
 
                 String choice = userInput.readLine();
 
@@ -35,7 +35,7 @@ public class MainMenuController
 
                         request.put("RequestCode", "0");
 
-                        JSONObject response = BaseMethods.makeRequest(request);
+                        JSONObject response = UtilityMethods.makeRequest(request);
 
                         if (response.getInt("StatusCode") == 200)
                         {
@@ -56,7 +56,7 @@ public class MainMenuController
 
                             request.put("RequestBody", new JSONObject().put("answers", answers));
 
-                            response = BaseMethods.makeRequest(request);
+                            response = UtilityMethods.makeRequest(request);
 
                             if (response.getInt("StatusCode") == 200)
                             {
@@ -66,7 +66,7 @@ public class MainMenuController
                                 {
                                     System.out.println("\nCaution! You're COVID Positive!\nPlease Enter Create A Profile: ");
 
-                                    new UserController().register(userInput);
+                                    UserController.register(userInput);
                                 }
                                 else
                                 {
@@ -79,7 +79,7 @@ public class MainMenuController
                             }
                             else
                             {
-                                System.out.println("Some internal error occurred!");
+                                System.out.println("\nSome internal error occurred!");
                             }
                         }
                         else if (response.getInt("StatusCode") == 400)
@@ -88,7 +88,9 @@ public class MainMenuController
                         }
                         else
                         {
-                            System.out.println("Some internal error occurred!");
+                            System.out.println(response);
+
+                            System.out.println("\nSome internal error occurred!");
                         }
                     }
 
@@ -98,17 +100,17 @@ public class MainMenuController
 
                         request.put("RequestCode", "2");
 
-                        System.out.print("\nEnter your are name: ");
+                        System.out.print("\nEnter your city name: ");
 
-                        String area = userInput.readLine();
+                        String city = userInput.readLine();
 
-                        request.put("RequestBody", new JSONObject().put("area", area));
+                        request.put("RequestBody", new JSONObject().put("city", city));
 
-                        JSONObject response = BaseMethods.makeRequest(request);
+                        JSONObject response = UtilityMethods.makeRequest(request);
 
                         if (response.getInt("StatusCode") == 200)
                         {
-                            System.out.println("\nActive cases in your area are: " + response.getJSONObject("ResponseBody").getInt("activeCases"));
+                            System.out.println("\nActive cases in your city are: " + response.getJSONObject("ResponseBody").getInt("activeCases"));
                         }
                         else if (response.getInt("StatusCode") == 400)
                         {
@@ -116,12 +118,12 @@ public class MainMenuController
                         }
                         else
                         {
-                            System.out.println("Some internal error occurred!");
+                            System.out.println("\nSome internal error occurred!");
                         }
 
                     }
 
-                    case "3" -> new UserController().login(userInput);
+                    case "3" -> UserController.login(userInput);
 
                     case "4" ->
                     {

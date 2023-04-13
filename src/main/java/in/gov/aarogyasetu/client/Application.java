@@ -11,7 +11,7 @@ public class Application
 
         System.out.println("* * * * * * * * * * Welcome To Aarogya Setu * * * * * * * * * *");
 
-        new MainMenuController().start();
+        MainMenuController.start();
 
     }
 

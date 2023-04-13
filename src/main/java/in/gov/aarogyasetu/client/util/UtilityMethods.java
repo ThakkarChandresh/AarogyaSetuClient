@@ -9,7 +9,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 
-public class BaseMethods
+public class UtilityMethods
 {
 
     public static JSONObject makeRequest(JSONObject request) throws IOException

@@ -1,6 +1,6 @@
 package in.gov.aarogyasetu.client.controller;
 
-import in.gov.aarogyasetu.client.util.BaseMethods;
+import in.gov.aarogyasetu.client.util.UtilityMethods;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -11,16 +11,15 @@ import java.io.IOException;
 public class FacilityController
 {
 
-    private String token;
+    private static String token;
 
-    FacilityController(String token)
+    public static void setToken(String token)
     {
 
-        this.token = token;
-
+        FacilityController.token = token;
     }
 
-    public void showMenu(BufferedReader userInput) throws IOException
+    public static void showMenu(BufferedReader userInput) throws IOException
     {
 
         JSONObject request;
@@ -42,18 +41,18 @@ public class FacilityController
 
                     request.put("RequestCode", "6");
 
-                    System.out.print("\nDo want to filter it by your area? (Yes/No): ");
+                    System.out.print("\nDo want to filter it by your city? (Yes/No): ");
 
-                    boolean filterByArea = userInput.readLine().equalsIgnoreCase("yes");
+                    boolean filterByCity = userInput.readLine().equalsIgnoreCase("yes");
 
-                    request.put("RequestBody", new JSONObject().put("filterByArea", filterByArea).put("token", this.token));
+                    request.put("RequestBody", new JSONObject().put("filterByCity", filterByCity).put("token", token));
 
-                    JSONObject response = BaseMethods.makeRequest(request);
+                    JSONObject response = UtilityMethods.makeRequest(request);
 
                     if (response.getInt("StatusCode") == 200)
                     {
 
-                        this.token = response.getJSONObject("ResponseBody").getString("access-token");
+                        token = response.getJSONObject("ResponseBody").getString("access-token");
 
                         JSONArray hospitals = response.getJSONObject("ResponseBody").getJSONArray("hospitals");
 
@@ -69,7 +68,7 @@ public class FacilityController
 
                                 System.out.println("Doctor Name Is: " + jsonObject.get("doctorName"));
 
-                                System.out.println("Hospital Is In Area: " + jsonObject.get("area"));
+                                System.out.println("Hospital Is In City: " + jsonObject.get("city"));
 
                                 System.out.println("Contact Number Is: " + jsonObject.get("contactNumber"));
 
@@ -93,7 +92,9 @@ public class FacilityController
                     }
                     else
                     {
-                        System.out.println("Some internal error occurred!");
+                        isLoggedIn = false;
+
+                        System.out.println("\nSome internal error occurred!");
                     }
                 }
                 case "2" ->
@@ -106,13 +107,13 @@ public class FacilityController
 
                     String hospitalID = userInput.readLine();
 
-                    request.put("RequestBody", new JSONObject().put("hospitalID", hospitalID).put("token", this.token));
+                    request.put("RequestBody", new JSONObject().put("hospitalID", hospitalID).put("token", token));
 
-                    JSONObject response = BaseMethods.makeRequest(request);
+                    JSONObject response = UtilityMethods.makeRequest(request);
 
                     if (response.getInt("StatusCode") == 200)
                     {
-                        this.token = response.getJSONObject("ResponseBody").getString("access-token");
+                        token = response.getJSONObject("ResponseBody").getString("access-token");
 
                         System.out.println("\n" + response.getJSONObject("ResponseBody").getString("message"));
                     }
@@ -128,7 +129,9 @@ public class FacilityController
                     }
                     else
                     {
-                        System.out.println("Some internal error occurred!");
+                        isLoggedIn = false;
+
+                        System.out.println("\nSome internal error occurred!");
                     }
                 }
                 case "3" ->
@@ -143,14 +146,14 @@ public class FacilityController
 
                     if (better)
                     {
-                        request.put("RequestBody", new JSONObject().put("token", this.token));
+                        request.put("RequestBody", new JSONObject().put("token", token));
 
-                        JSONObject response = BaseMethods.makeRequest(request);
+                        JSONObject response = UtilityMethods.makeRequest(request);
 
                         if (response.getInt("StatusCode") == 200)
                         {
 
-                            this.token = response.getJSONObject("ResponseBody").getString("access-token");
+                            token = response.getJSONObject("ResponseBody").getString("access-token");
 
                             System.out.println("\n" + response.getJSONObject("ResponseBody").getString("message"));
                         }
@@ -166,7 +169,9 @@ public class FacilityController
                         }
                         else
                         {
-                            System.out.println("Some internal error occurred!");
+                            isLoggedIn = false;
+
+                            System.out.println("\nSome internal error occurred!");
                         }
 
                     }
@@ -181,9 +186,9 @@ public class FacilityController
 
                     request.put("RequestCode", "4");
 
-                    request.put("RequestBody", new JSONObject().put("token", this.token));
+                    request.put("RequestBody", new JSONObject().put("token", token));
 
-                    JSONObject response = BaseMethods.makeRequest(request);
+                    JSONObject response = UtilityMethods.makeRequest(request);
 
                     System.out.println("\n" + response.getJSONObject("ResponseBody").getString("message"));
 

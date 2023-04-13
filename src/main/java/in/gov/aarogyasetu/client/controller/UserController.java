@@ -1,6 +1,6 @@
 package in.gov.aarogyasetu.client.controller;
 
-import in.gov.aarogyasetu.client.util.BaseMethods;
+import in.gov.aarogyasetu.client.util.UtilityMethods;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -10,7 +10,7 @@ import java.io.IOException;
 public class UserController
 {
 
-    public void register(BufferedReader userInput) throws IOException
+    public static void register(BufferedReader userInput) throws IOException
     {
 
         JSONObject request = new JSONObject();
@@ -27,9 +27,9 @@ public class UserController
 
         userDetails.put("contactNumber", userInput.readLine());
 
-        System.out.print("\nIn Which Area You Live?: ");
+        System.out.print("\nIn Which City You Live?: ");
 
-        userDetails.put("area", userInput.readLine());
+        userDetails.put("city", userInput.readLine());
 
         System.out.print("\nWhich Symptoms You Are Having?: ");
 
@@ -47,7 +47,7 @@ public class UserController
 
         request.put("RequestBody", new JSONObject().put("userDetails", userDetails));
 
-        JSONObject response = BaseMethods.makeRequest(request);
+        JSONObject response = UtilityMethods.makeRequest(request);
 
         if (response.getInt("StatusCode") == 200)
         {
@@ -59,11 +59,11 @@ public class UserController
         }
         else
         {
-            System.out.println("Some internal error occurred!");
+            System.out.println("\nSome internal error occurred!");
         }
     }
 
-    public void login(BufferedReader userInput) throws IOException
+    public static void login(BufferedReader userInput) throws IOException
     {
 
         JSONObject request = new JSONObject();
@@ -82,13 +82,15 @@ public class UserController
 
         request.put("RequestBody", new JSONObject().put("userCredentials", credentials));
 
-        JSONObject response = BaseMethods.makeRequest(request);
+        JSONObject response = UtilityMethods.makeRequest(request);
 
         if (response.getInt("StatusCode") == 200)
         {
             System.out.println("\nLogged in successfully!");
 
-            new FacilityController(response.getJSONObject("ResponseBody").getString("access-token")).showMenu(userInput);
+            FacilityController.setToken(response.getJSONObject("ResponseBody").getString("access-token"));
+
+            FacilityController.showMenu(userInput);
 
         }
         else if (response.getInt("StatusCode") == 400)
@@ -101,7 +103,7 @@ public class UserController
         }
         else
         {
-            System.out.println("Some internal error occurred!");
+            System.out.println("\nSome internal error occurred!");
         }
     }
 
